@@ -1,9 +1,9 @@
-﻿using Baracuda.Bedrock.Events;
-using Baracuda.Utilities.Pools;
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Baracuda.Utilities.Events;
+using Baracuda.Utilities.Pools;
+using JetBrains.Annotations;
 
 namespace Baracuda.Bedrock.Locks
 {
@@ -11,8 +11,8 @@ namespace Baracuda.Bedrock.Locks
     {
         #region Fields
 
-        private readonly IBroadcast _firstAddedEvent = new Broadcast();
-        private readonly IBroadcast _lastRemovedEvent = new Broadcast();
+        private readonly Broadcast _firstAddedEvent = new();
+        private readonly Broadcast _lastRemovedEvent = new();
 
         #endregion
 

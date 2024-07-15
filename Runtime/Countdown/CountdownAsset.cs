@@ -1,10 +1,10 @@
-using Baracuda.Bedrock.Events;
+using System;
+using System.Collections.Generic;
 using Baracuda.Bedrock.Mediator;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Bedrock.PlayerLoop;
+using Baracuda.Utilities.Events;
 using Sirenix.OdinInspector;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 

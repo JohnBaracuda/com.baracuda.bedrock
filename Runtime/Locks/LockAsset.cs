@@ -1,13 +1,13 @@
-using Baracuda.Bedrock.Events;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Baracuda.Bedrock.Mediator;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Bedrock.PlayerLoop;
 using Baracuda.Utilities;
+using Baracuda.Utilities.Events;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Baracuda.Bedrock.Locks
@@ -30,10 +30,10 @@ namespace Baracuda.Bedrock.Locks
         [ReadOnly]
         [ShowInInspector]
         private readonly HashSet<T> _locks = new(4);
-        private readonly IBroadcast _firstAddedEvent = new Broadcast();
-        private readonly IBroadcast _anyAddedEvent = new Broadcast();
-        private readonly IBroadcast _lastRemovedEvent = new Broadcast();
-        private readonly IBroadcast _anyRemovedEvent = new Broadcast();
+        private readonly Broadcast _firstAddedEvent = new();
+        private readonly Broadcast _anyAddedEvent = new();
+        private readonly Broadcast _lastRemovedEvent = new();
+        private readonly Broadcast _anyRemovedEvent = new();
 
         #endregion
 

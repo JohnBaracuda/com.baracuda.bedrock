@@ -1,11 +1,11 @@
-﻿using Baracuda.Bedrock.Events;
-using Baracuda.Bedrock.Odin;
-using Sirenix.OdinInspector;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using Baracuda.Bedrock.Odin;
+using Baracuda.Utilities.Events;
+using Sirenix.OdinInspector;
 
 namespace Baracuda.Bedrock.Collections
 {

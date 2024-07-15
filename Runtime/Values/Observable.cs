@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Baracuda.Bedrock.Events;
+using Baracuda.Utilities.Events;
 using JetBrains.Annotations;
 
 namespace Baracuda.Bedrock.Values
@@ -61,9 +61,6 @@ namespace Baracuda.Bedrock.Values
 
         [PublicAPI]
         public bool HasValue => _value != null;
-
-        [PublicAPI]
-        public bool IsNull => _value == null;
 
         public Observable()
         {

@@ -119,11 +119,6 @@ namespace Baracuda.Bedrock.PlayerLoop
         public static Segment Segment { get; private set; } = Segment.None;
 
         /// <summary>
-        ///     Get the current update count.
-        /// </summary>
-        public static int FrameCount { get; private set; }
-
-        /// <summary>
         ///     Get the current physics update count.
         /// </summary>
         public static int FixedUpdateCount { get; private set; }

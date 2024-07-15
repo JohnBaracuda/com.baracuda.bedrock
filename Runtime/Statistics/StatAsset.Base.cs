@@ -1,10 +1,10 @@
-﻿using Baracuda.Bedrock.Assets;
-using Baracuda.Bedrock.Events;
+﻿using System;
+using Baracuda.Bedrock.Assets;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Serialization;
+using Baracuda.Utilities.Events;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
-using System;
 using UnityEngine;
 using UnityEngine.Localization;
 
@@ -48,7 +48,7 @@ namespace Baracuda.Bedrock.Statistics
         public abstract Modification Type();
 
         [PublicAPI]
-        public static IBroadcast<StatAsset> Updated { get; } = new Broadcast<StatAsset>();
+        public static Broadcast<StatAsset> Updated { get; } = new();
 
         #endregion
 

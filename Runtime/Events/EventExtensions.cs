@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Baracuda.Utilities.Events;
 
 namespace Baracuda.Bedrock.Events
 {
@@ -98,7 +99,7 @@ namespace Baracuda.Bedrock.Events
         ///     Returns a handle that can be used to remove the lambda from the event.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static LambdaHandle AddLambda(this IReceiver receiver, Action lambda)
+        public static LambdaHandle AddLambda(this Broadcast receiver, Action lambda)
         {
             receiver.Add(lambda);
             return new LambdaHandle(() => { receiver.Remove(lambda); });
@@ -109,7 +110,7 @@ namespace Baracuda.Bedrock.Events
         ///     Returns a handle that can be used to remove the lambda from the event.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static LambdaHandle AddLambda<T>(this IReceiver<T> receiver, Action<T> lambda)
+        public static LambdaHandle AddLambda<T>(this Broadcast<T> receiver, Action<T> lambda)
         {
             receiver.Add(lambda);
             return new LambdaHandle(() => { receiver.Remove(lambda); });
@@ -120,7 +121,7 @@ namespace Baracuda.Bedrock.Events
         ///     Returns a handle that can be used to remove the lambda from the event.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static LambdaHandle AddLambda<T1, T2>(this IReceiver<T1, T2> receiver, Action<T1, T2> lambda)
+        public static LambdaHandle AddLambda<T1, T2>(this Broadcast<T1, T2> receiver, Action<T1, T2> lambda)
         {
             receiver.Add(lambda);
             return new LambdaHandle(() => { receiver.Remove(lambda); });
@@ -131,7 +132,7 @@ namespace Baracuda.Bedrock.Events
         ///     Returns a handle that can be used to remove the lambda from the event.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static LambdaHandle AddLambda<T1, T2, T3>(this IReceiver<T1, T2, T3> receiver, Action<T1, T2, T3> lambda)
+        public static LambdaHandle AddLambda<T1, T2, T3>(this Broadcast<T1, T2, T3> receiver, Action<T1, T2, T3> lambda)
         {
             receiver.Add(lambda);
             return new LambdaHandle(() => { receiver.Remove(lambda); });
@@ -142,7 +143,7 @@ namespace Baracuda.Bedrock.Events
         ///     Returns a handle that can be used to remove the lambda from the event.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static LambdaHandle AddLambda<T1, T2, T3, T4>(this IReceiver<T1, T2, T3, T4> receiver,
+        public static LambdaHandle AddLambda<T1, T2, T3, T4>(this Broadcast<T1, T2, T3, T4> receiver,
             Action<T1, T2, T3, T4> lambda)
         {
             receiver.Add(lambda);

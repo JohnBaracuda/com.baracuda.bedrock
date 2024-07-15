@@ -15,4 +15,12 @@ namespace Baracuda.Bedrock.Odin
         public float SpaceBefore { get; set; } = 4;
         public float SpaceAfter { get; set; } = 4;
     }
+
+    public class LineAfterAttribute : LineAttribute
+    {
+        public LineAfterAttribute()
+        {
+            DrawTiming = DrawTiming.After;
+        }
+    }
 }

@@ -1,10 +1,10 @@
-﻿using Baracuda.Bedrock.Events;
+﻿using System;
+using System.Collections.Generic;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Bedrock.PlayerLoop;
+using Baracuda.Utilities.Events;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Baracuda.Bedrock.Values

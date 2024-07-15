@@ -1,10 +1,10 @@
-﻿using Baracuda.Bedrock.Events;
+﻿using System;
+using System.Linq;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Bedrock.PlayerLoop;
 using Baracuda.Serialization;
+using Baracuda.Utilities.Events;
 using Sirenix.OdinInspector;
-using System;
-using System.Linq;
 using UnityEngine;
 
 namespace Baracuda.Bedrock.Statistics
@@ -26,7 +26,7 @@ namespace Baracuda.Bedrock.Statistics
         [ReadOnly]
         [ShowInInspector]
         [Foldout("Settings")]
-        public T Value => _statData != null ? _statData.value : default(T);
+        public T Value => _statData != null ? _statData.value : default;
 
         protected StatData<T> StatData => _statData;
         private readonly Broadcast<T> _changedBroadcast = new();

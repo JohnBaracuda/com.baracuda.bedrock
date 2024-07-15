@@ -1,14 +1,14 @@
-using Baracuda.Bedrock.Injection;
-using Baracuda.Bedrock.Locks;
-using Baracuda.Bedrock.Odin;
-using Baracuda.Bedrock.PlayerLoop;
-using Baracuda.Utilities;
-using Baracuda.Utilities.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Baracuda.Bedrock.Injection;
+using Baracuda.Bedrock.Odin;
+using Baracuda.Bedrock.PlayerLoop;
+using Baracuda.Utilities;
+using Baracuda.Utilities.Collections;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Baracuda.Bedrock.Cursor
@@ -21,15 +21,23 @@ namespace Baracuda.Bedrock.Cursor
         #region Fields
 
         [Inject] [Debug] private readonly CursorSystemSettings _settings;
-        [Debug] private List<object> VisibilityBlocker => _cursorVisibilityBlocker.Locks.ToList();
-        [Debug] private List<object> MovementLimiter => _cursorMovementLimiter.Locks.ToList();
-        [Debug] private List<object> MovementBlocker => _cursorMovementBlocker.Locks.ToList();
-
-        private readonly Lock _cursorVisibilityBlocker = new();
-        private readonly Lock _cursorMovementLimiter = new();
-        private readonly Lock _cursorMovementBlocker = new();
 
         private readonly StackList<CursorFile> _cursorStack = new();
+
+        [ReadonlyInspector]
+        private readonly HashSet<object> _visibilityProvider = new();
+        [ReadonlyInspector]
+        private readonly HashSet<object> _visibilityBlocker = new();
+
+        [ReadonlyInspector]
+        private readonly HashSet<object> _lockProvider = new();
+        [ReadonlyInspector]
+        private readonly HashSet<object> _lockBlocker = new();
+
+        [ReadonlyInspector]
+        private readonly HashSet<object> _confineProvider = new();
+        [ReadonlyInspector]
+        private readonly HashSet<object> _confineBlocker = new();
 
         #endregion
 
@@ -44,7 +52,7 @@ namespace Baracuda.Bedrock.Cursor
             get => UnityEngine.Cursor.lockState;
             private set
             {
-                var changed = LockState != value;
+                var changed = UnityEngine.Cursor.lockState != value;
                 UnityEngine.Cursor.lockState = value;
                 if (changed)
                 {
@@ -58,7 +66,7 @@ namespace Baracuda.Bedrock.Cursor
             get => UnityEngine.Cursor.visible;
             private set
             {
-                var changed = Visible != value;
+                var changed = UnityEngine.Cursor.visible != value;
                 UnityEngine.Cursor.visible = value;
                 if (changed)
                 {
@@ -95,36 +103,91 @@ namespace Baracuda.Bedrock.Cursor
         #endregion
 
 
-        #region Cursor State
+        // TODO: Add Context (Gamepad / Desktop / Nav) to Provider source api
 
-        public void AddCursorVisibilityBlocker(object blocker)
+
+        #region Cursor: Visibility
+
+        [PublicAPI]
+        public void AddCursorVisibilitySource(object provider)
         {
-            _cursorVisibilityBlocker.Add(blocker);
+            _visibilityProvider.Add(provider);
         }
 
-        public void AddCursorConfiner(object confiner)
+        [PublicAPI]
+        public void RemoveCursorVisibilitySource(object provider)
         {
-            _cursorMovementLimiter.Add(confiner);
+            _visibilityProvider.Remove(provider);
         }
 
-        public void AddCursorLocker(object blocker)
+        [PublicAPI]
+        public void BlockCursorVisibility(object blocker)
         {
-            _cursorMovementBlocker.Add(blocker);
+            _visibilityBlocker.Add(blocker);
         }
 
-        public void RemoveCursorVisibilityBlocker(object blocker)
+        [PublicAPI]
+        public void UnblockCursorVisibility(object blocker)
         {
-            _cursorVisibilityBlocker.Remove(blocker);
+            _visibilityBlocker.Remove(blocker);
         }
 
-        public void RemoveCursorConfiner(object confiner)
+        #endregion
+
+
+        #region Cursor: Lock
+
+        [PublicAPI]
+        public void AddCursorLockingSource(object provider)
         {
-            _cursorMovementLimiter.Remove(confiner);
+            _lockProvider.Add(provider);
         }
 
-        public void RemoveCursorLocker(object blocker)
+        [PublicAPI]
+        public void RemoveCursorLockingSource(object provider)
         {
-            _cursorMovementBlocker.Remove(blocker);
+            _lockProvider.Remove(provider);
+        }
+
+        [PublicAPI]
+        public void BlockCursorLocking(object blocker)
+        {
+            _lockBlocker.Add(blocker);
+        }
+
+        [PublicAPI]
+        public void UnblockCursorLocking(object blocker)
+        {
+            _lockBlocker.Remove(blocker);
+        }
+
+        #endregion
+
+
+        #region Cursor: Confine
+
+        [PublicAPI]
+        public void AddCursorConfineSource(object provider)
+        {
+            _confineProvider.Add(provider);
+        }
+
+        [PublicAPI]
+        public void RemoveCursorConfineSource(object provider)
+        {
+            _confineProvider.Remove(provider);
+        }
+
+        [PublicAPI]
+        public void BlockCursorConfine(object blocker)
+        {
+            _confineBlocker.Add(blocker);
+        }
+
+        [PublicAPI]
+        public void UnblockCursorConfine(object blocker)
+        {
+            _confineBlocker.Remove(blocker);
         }
 
         #endregion
@@ -136,24 +199,16 @@ namespace Baracuda.Bedrock.Cursor
         {
             ActiveCursorSet = _settings.StartCursorSet;
             AddCursorOverride(_settings.StartCursor);
-
-            _cursorVisibilityBlocker.FirstAdded += UpdateCursorState;
-            _cursorVisibilityBlocker.LastRemoved += UpdateCursorState;
-            _cursorMovementLimiter.FirstAdded += UpdateCursorState;
-            _cursorMovementLimiter.LastRemoved += UpdateCursorState;
-            _cursorMovementBlocker.FirstAdded += UpdateCursorState;
-            _cursorMovementBlocker.LastRemoved += UpdateCursorState;
         }
 
         private void OnDestroy()
         {
-            _cursorVisibilityBlocker.FirstAdded -= UpdateCursorState;
-            _cursorVisibilityBlocker.LastRemoved -= UpdateCursorState;
-            _cursorMovementLimiter.FirstAdded -= UpdateCursorState;
-            _cursorMovementLimiter.LastRemoved -= UpdateCursorState;
-            _cursorMovementBlocker.FirstAdded -= UpdateCursorState;
-            _cursorMovementBlocker.LastRemoved -= UpdateCursorState;
             _cursorStack.Clear();
+        }
+
+        private void LateUpdate()
+        {
+            UpdateCursorState();
         }
 
         #endregion
@@ -161,23 +216,17 @@ namespace Baracuda.Bedrock.Cursor
 
         #region Cursor State
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateCursorState()
         {
-            Visible = _cursorVisibilityBlocker.HasAny() is false;
+            var cursorVisibility = _visibilityProvider.Any() && _visibilityBlocker.IsEmpty();
+            var cursorLock = _lockProvider.Any() && _lockBlocker.IsEmpty();
+            var cursorConfine = _confineProvider.Any() && _confineBlocker.IsEmpty();
 
-            if (_cursorMovementBlocker.HasAny())
-            {
-                LockState = CursorLockMode.Locked;
-                return;
-            }
+            var lockState = cursorLock ? CursorLockMode.Locked : cursorConfine ? CursorLockMode.Confined : CursorLockMode.None;
 
-            if (_cursorMovementLimiter.HasAny())
-            {
-                LockState = CursorLockMode.Confined;
-                return;
-            }
-
-            LockState = CursorLockMode.None;
+            Visible = cursorVisibility;
+            LockState = lockState;
         }
 
         #endregion
@@ -312,12 +361,15 @@ namespace Baracuda.Bedrock.Cursor
                 case CursorAnimationType.PlayOnce:
                     _cursorAnimation = Gameloop.StartCoroutine(PlayOnce(animationFile));
                     break;
+
                 case CursorAnimationType.Loop:
                     _cursorAnimation = Gameloop.StartCoroutine(Loop(animationFile));
                     break;
+
                 case CursorAnimationType.PingPong:
                     _cursorAnimation = Gameloop.StartCoroutine(PingPong(animationFile));
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

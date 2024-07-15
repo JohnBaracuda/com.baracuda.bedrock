@@ -1,13 +1,13 @@
-﻿using Baracuda.Bedrock.Events;
-using Baracuda.Bedrock.Odin;
-using Baracuda.Bedrock.PlayerLoop;
-using Baracuda.Serialization;
-using Baracuda.Utilities.Types;
-using Sirenix.OdinInspector;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Baracuda.Bedrock.Odin;
+using Baracuda.Bedrock.PlayerLoop;
+using Baracuda.Serialization;
+using Baracuda.Utilities.Events;
+using Baracuda.Utilities.Types;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -54,10 +54,12 @@ namespace Baracuda.Bedrock.Values
         [Line]
         [ShowIf(nameof(valueAssetType), ValueAssetType.Property)]
         [SerializeField] private bool logPropertyWarnings;
+
         [ShowInInspector]
         [PropertyOrder(2)]
         [ShowIf(nameof(valueAssetType), ValueAssetType.Property)]
         private bool HasSetter => _setter != null;
+
         [ShowInInspector]
         [PropertyOrder(2)]
         [ShowIf(nameof(valueAssetType), ValueAssetType.Property)]
@@ -74,7 +76,7 @@ namespace Baracuda.Bedrock.Values
         private Func<TValue> _getter;
         private Action<TValue> _setter;
 
-        private readonly IBroadcast<TValue> _changedEvent = new Broadcast<TValue>();
+        private readonly Broadcast<TValue> _changedEvent = new();
 
         #endregion
 
@@ -88,16 +90,20 @@ namespace Baracuda.Bedrock.Values
             {
                 case ValueAssetType.Constant:
                     break;
+
                 case ValueAssetType.Runtime:
                     _runtimeValue = defaultRuntimeValue;
                     break;
+
                 case ValueAssetType.Save:
                     SavePersistentData();
                     break;
+
                 case ValueAssetType.Property:
                     _setter = null;
                     _getter = null;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -129,7 +135,7 @@ namespace Baracuda.Bedrock.Values
                         Debug.LogWarning("Value Asset", "Property getter is not set!", this);
                     }
 #endif
-                    return default(TValue);
+                    return default;
                 }
                 return _getter();
             }
@@ -340,17 +346,21 @@ namespace Baracuda.Bedrock.Values
             {
                 case ValueAssetType.Constant:
                     break;
+
                 case ValueAssetType.Runtime:
                     _runtimeValue = defaultRuntimeValue;
                     break;
+
                 case ValueAssetType.Save:
                     if (FileSystem.IsInitialized)
                     {
                         LoadPersistentData();
                     }
                     break;
+
                 case ValueAssetType.Property:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

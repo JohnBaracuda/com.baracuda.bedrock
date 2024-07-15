@@ -306,8 +306,6 @@ namespace Baracuda.Bedrock.PlayerLoop
             {
                 Debug.LogException(logCategory, exception);
             }
-
-            FrameCount++;
         }
 
         private static void OnFixedUpdate()
@@ -569,7 +567,6 @@ namespace Baracuda.Bedrock.PlayerLoop
                 }
             }
 
-            FrameCount = 0;
             FixedUpdateCount = 0;
         }
 
@@ -597,7 +594,6 @@ namespace Baracuda.Bedrock.PlayerLoop
                 }
             }
 
-            FrameCount = 0;
             FixedUpdateCount = 0;
         }
 

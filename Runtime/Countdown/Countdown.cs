@@ -1,7 +1,7 @@
-﻿using Baracuda.Bedrock.Events;
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Baracuda.Utilities.Events;
+using JetBrains.Annotations;
 using UnityEngine.Assertions;
 using UnityEngine.Pool;
 
@@ -23,6 +23,7 @@ namespace Baracuda.Bedrock.Countdown
         public bool IsPaused => IsActive && IsRunning is false;
         public bool IsActive { get; private set; }
         public bool IsInactive => IsActive is false;
+
         public IList<ICountdownDurationModifier> CooldownDurationModifiers { get; } =
             new List<ICountdownDurationModifier>();
 

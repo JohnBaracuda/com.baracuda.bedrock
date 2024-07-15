@@ -1,14 +1,15 @@
-using Baracuda.Bedrock.Odin;
-using JetBrains.Annotations;
-using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using Baracuda.Bedrock.Odin;
+using Baracuda.Utilities.Events;
+using JetBrains.Annotations;
+using Sirenix.OdinInspector;
 
 namespace Baracuda.Bedrock.Events
 {
-    public abstract class EventAsset : EventAssetBase, IReceiver
+    public abstract class EventAsset : EventAssetBase
     {
-        private protected readonly IBroadcast Event = new Broadcast();
+        private protected readonly Broadcast Event = new();
 
         public void Add([NotNull] Action listener)
         {
@@ -108,7 +109,7 @@ namespace Baracuda.Bedrock.Events
         public IReadOnlyCollection<Action> GetListenerCollection => Event.GetListenerCollection;
     }
 
-    public abstract class EventAsset<T> : EventAssetBase, IReceiver<T>
+    public abstract class EventAsset<T> : EventAssetBase
     {
         public event Action<T> Invoked
         {
@@ -116,7 +117,7 @@ namespace Baracuda.Bedrock.Events
             remove => Remove(value);
         }
 
-        private protected readonly IBroadcast<T> Event = new Broadcast<T>();
+        private protected readonly Broadcast<T> Event = new();
 
         public void Add([NotNull] Action<T> listener)
         {
@@ -216,9 +217,9 @@ namespace Baracuda.Bedrock.Events
         public IReadOnlyCollection<Action<T>> GetListenerCollection => Event.GetListenerCollection;
     }
 
-    public abstract class EventAsset<T1, T2> : EventAssetBase, IReceiver<T1, T2>
+    public abstract class EventAsset<T1, T2> : EventAssetBase
     {
-        private protected readonly IBroadcast<T1, T2> Event = new Broadcast<T1, T2>();
+        private protected readonly Broadcast<T1, T2> Event = new();
 
         public void Add([NotNull] Action<T1, T2> listener)
         {
@@ -318,9 +319,9 @@ namespace Baracuda.Bedrock.Events
         public IReadOnlyCollection<Action<T1, T2>> GetListenerCollection => Event.GetListenerCollection;
     }
 
-    public abstract class EventAsset<T1, T2, T3> : EventAssetBase, IReceiver<T1, T2, T3>
+    public abstract class EventAsset<T1, T2, T3> : EventAssetBase
     {
-        private protected readonly IBroadcast<T1, T2, T3> Event = new Broadcast<T1, T2, T3>();
+        private protected readonly Broadcast<T1, T2, T3> Event = new();
 
         public void Add([NotNull] Action<T1, T2, T3> listener)
         {
@@ -420,9 +421,9 @@ namespace Baracuda.Bedrock.Events
         public IReadOnlyCollection<Action<T1, T2, T3>> GetListenerCollection => Event.GetListenerCollection;
     }
 
-    public abstract class EventAsset<T1, T2, T3, T4> : EventAssetBase, IReceiver<T1, T2, T3, T4>
+    public abstract class EventAsset<T1, T2, T3, T4> : EventAssetBase
     {
-        private protected readonly IBroadcast<T1, T2, T3, T4> Event = new Broadcast<T1, T2, T3, T4>();
+        private protected readonly Broadcast<T1, T2, T3, T4> Event = new();
 
         public void Add([NotNull] Action<T1, T2, T3, T4> listener)
         {

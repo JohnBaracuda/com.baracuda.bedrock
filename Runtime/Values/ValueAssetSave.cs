@@ -1,13 +1,13 @@
-﻿using Baracuda.Bedrock.Events;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Bedrock.PlayerLoop;
 using Baracuda.Serialization;
 using Baracuda.Utilities;
+using Baracuda.Utilities.Events;
 using Baracuda.Utilities.Types;
 using Sirenix.OdinInspector;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 namespace Baracuda.Bedrock.Values

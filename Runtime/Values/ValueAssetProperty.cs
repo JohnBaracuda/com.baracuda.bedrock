@@ -1,7 +1,7 @@
-﻿using Baracuda.Bedrock.Events;
+﻿using System;
 using Baracuda.Bedrock.Odin;
+using Baracuda.Utilities.Events;
 using Sirenix.OdinInspector;
-using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -15,6 +15,7 @@ namespace Baracuda.Bedrock.Values
         [ShowInInspector]
         [PropertyOrder(2)]
         private bool HasSetter => _setter != null;
+
         [ShowInInspector]
         [PropertyOrder(2)]
         private bool HasGetter => _getter != null;
@@ -22,7 +23,7 @@ namespace Baracuda.Bedrock.Values
         private Func<TValue> _getter;
         private Action<TValue> _setter;
 
-        private readonly IBroadcast<TValue> _changedEvent = new Broadcast<TValue>();
+        private readonly Broadcast<TValue> _changedEvent = new();
 
         [ShowInInspector]
         public override TValue Value
@@ -66,7 +67,7 @@ namespace Baracuda.Bedrock.Values
                     Debug.LogWarning("Value Asset", "Property getter is not set!", this);
                 }
 #endif
-                return default(TValue);
+                return default;
             }
             return _getter();
         }

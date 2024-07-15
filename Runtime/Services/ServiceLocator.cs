@@ -167,12 +167,24 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public static void Remove<T>(T service)
         {
+#if UNITY_EDITOR
+            if (Gameloop.IsQuitting)
+            {
+                return;
+            }
+#endif
             Global.Remove(service);
         }
 
         [PublicAPI]
         public static void Remove<T>()
         {
+#if UNITY_EDITOR
+            if (Gameloop.IsQuitting)
+            {
+                return;
+            }
+#endif
             Global.Remove<T>();
         }
 

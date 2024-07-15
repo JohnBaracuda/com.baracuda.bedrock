@@ -1,15 +1,16 @@
+using System;
+using System.Collections.Generic;
 using Baracuda.Bedrock.PlayerLoop;
 using Baracuda.Utilities;
 using Baracuda.Utilities.Editor.Inspector;
-using System;
-using System.Collections.Generic;
+using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 using GUIUtility = Baracuda.Utilities.Editor.Helper.GUIUtility;
 using Object = UnityEngine.Object;
 
 namespace Baracuda.Bedrock.Editor.Windows
 {
-    public abstract class ProjectEditorWindow : Sirenix.OdinInspector.Editor.OdinEditorWindow
+    public abstract class ProjectEditorWindow : OdinEditorWindow
     {
         #region Settings
 
@@ -343,68 +344,38 @@ namespace Baracuda.Bedrock.Editor.Windows
 
         protected void AddEditor<T>(Func<T> getFunc, string editorTitle) where T : Object
         {
-            if (getFunc() == null)
-            {
-                return;
-            }
+            var editor = default(UnityEditor.Editor);
 
-            var editor = UnityEditor.Editor.CreateEditor(getFunc());
-            _editorCache.Add(editor);
-
-            if (editor != null)
+            _instructions.Add(() =>
             {
-                _instructions.Add(() =>
+                if (SearchQuery.IsNotNullOrWhitespace() && !editorTitle.ContainsIgnoreCase(SearchQuery))
                 {
-                    if (SearchQuery.IsNotNullOrWhitespace() && !editorTitle.ContainsIgnoreCase(SearchQuery))
+                    return;
+                }
+                var foldoutStyle = FoldoutHandler.Style;
+                FoldoutHandler.Style = FoldoutStyle.Dark;
+                if (Foldout[editorTitle])
+                {
+                    editor ??= UnityEditor.Editor.CreateEditor(getFunc());
+                    if (editor == null)
                     {
+                        UnityEditor.EditorGUILayout.HelpBox("Target is null!", UnityEditor.MessageType.Error);
                         return;
                     }
-                    var foldoutStyle = FoldoutHandler.Style;
-                    FoldoutHandler.Style = FoldoutStyle.Dark;
-                    if (Foldout[editorTitle])
-                    {
-                        if (editor.serializedObject.targetObject == null)
-                        {
-                            UnityEditor.EditorGUILayout.HelpBox("Target is null!", UnityEditor.MessageType.Error);
-                            return;
-                        }
-                        GUIUtility.Space();
-                        FoldoutHandler.Style = FoldoutStyle.Default;
-                        UnityEditor.EditorGUIUtility.wideMode = false;
-                        UnityEditor.EditorGUI.indentLevel++;
-                        UnityEditor.EditorGUIUtility.labelWidth = UnityEditor.EditorGUIUtility.currentViewWidth * 0.4f;
-                        editor.serializedObject.Update();
-                        editor.OnInspectorGUI();
-                        editor.serializedObject.ApplyModifiedProperties();
-                        UnityEditor.EditorGUI.indentLevel--;
-                        FoldoutHandler.Style = foldoutStyle;
-                        GUIUtility.Space();
-                        GUIUtility.DrawFullLine();
-                    }
-                });
-            }
-            else
-            {
-                _instructions.Add(() =>
-                {
-                    if (SearchQuery.IsNotNullOrWhitespace() && !editorTitle.ContainsIgnoreCase(SearchQuery))
-                    {
-                        return;
-                    }
-                    if (Foldout[editorTitle])
-                    {
-                        UnityEditor.EditorGUIUtility.wideMode = false;
-                        UnityEditor.EditorGUI.indentLevel++;
-                        UnityEditor.EditorGUIUtility.labelWidth = UnityEditor.EditorGUIUtility.currentViewWidth * 0.4f;
-                        UnityEditor.EditorGUILayout.HelpBox(
-                            $"{editorTitle} is null! Did you forget to assign the variable in the Configurations Prefab in the Resources folder?",
-                            UnityEditor.MessageType.Error);
-                        UnityEditor.EditorGUI.indentLevel--;
-                        GUIUtility.Space();
-                        GUIUtility.DrawFullLine();
-                    }
-                });
-            }
+                    GUIUtility.Space();
+                    FoldoutHandler.Style = FoldoutStyle.Default;
+                    UnityEditor.EditorGUIUtility.wideMode = false;
+                    UnityEditor.EditorGUI.indentLevel++;
+                    UnityEditor.EditorGUIUtility.labelWidth = UnityEditor.EditorGUIUtility.currentViewWidth * 0.4f;
+                    editor.serializedObject.Update();
+                    editor.OnInspectorGUI();
+                    editor.serializedObject.ApplyModifiedProperties();
+                    UnityEditor.EditorGUI.indentLevel--;
+                    FoldoutHandler.Style = foldoutStyle;
+                    GUIUtility.Space();
+                    GUIUtility.DrawFullLine();
+                }
+            });
         }
 
         protected void AddOptionalEditorGroup<T>(Func<List<T>> group, string editorTitle, string optionName,
