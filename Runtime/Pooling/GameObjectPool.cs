@@ -2,20 +2,16 @@
 
 namespace Baracuda.Bedrock.Pooling
 {
-    /// <summary>
-    ///     Generic <see cref="GameObject" /> object pool.
-    /// </summary>
     public class GameObjectPool : PoolAsset<GameObject>
     {
-        protected sealed override void OnReleaseInstance(GameObject instance)
+        protected override void OnGetElementFromPool(GameObject element)
         {
-            instance.SetActive(false);
-            instance.transform.SetParent(Parent);
+            element.SetActive(true);
         }
 
-        protected sealed override void OnGetInstance(GameObject instance)
+        protected override void OnReleaseElementToPool(GameObject element)
         {
-            instance.SetActive(true);
+            element.SetActive(false);
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using Baracuda.Bedrock.Injection;
+﻿using System;
+using System.Diagnostics;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Bedrock.PlayerLoop;
 using Baracuda.Utilities;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
-using System;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
@@ -117,10 +116,10 @@ namespace Baracuda.Bedrock.Assets
         [CallbackOnInitializationFirstPass]
         protected void HandleDependencies()
         {
-            if (assetOptions.HasFlagFast(Options.InjectDependencies))
-            {
-                Inject.Dependencies(this, false);
-            }
+            // if (assetOptions.HasFlagFast(Options.InjectDependencies))
+            // {
+            //     Inject.Dependencies(this, false);
+            // }
         }
 
 #if UNITY_EDITOR

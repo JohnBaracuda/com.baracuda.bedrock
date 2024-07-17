@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Baracuda.Bedrock.Collections;
 using Baracuda.Bedrock.Editor.Mediator;
 using Baracuda.Bedrock.Editor.ScriptGeneration;
@@ -10,11 +15,6 @@ using Baracuda.Bedrock.Values;
 using Baracuda.Utilities;
 using Baracuda.Utilities.Pools;
 using Baracuda.Utilities.Reflection;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -192,7 +192,7 @@ namespace Baracuda.Bedrock.Editor.Generation
                     {
                         var result = new ProfilingResult
                         {
-                            Types = new[] {type},
+                            Types = new[] { type },
                             MediatorTypes = attribute.MediatorTypes,
                             NameSpaceOverride = attribute.NameSpace,
                             Subfolder = attribute.Subfolder,
@@ -938,36 +938,52 @@ namespace Baracuda.Bedrock.Editor.Generation
             {
                 case MediatorTypes.ValueAsset:
                     return MediatorType.ValueAsset;
+
                 case MediatorTypes.EventAsset:
                     return MediatorType.EventAsset;
+
                 case MediatorTypes.PoolAsset:
                     return MediatorType.PoolAsset;
+
                 case MediatorTypes.RequestAsset:
                     return MediatorType.RequestAsset;
+
                 case MediatorTypes.ListAsset:
                     return MediatorType.ListAsset;
+
                 case MediatorTypes.ArrayAsset:
                     return MediatorType.ArrayAsset;
+
                 case MediatorTypes.HashSetAsset:
                     return MediatorType.HashSetAsset;
+
                 case MediatorTypes.SetAsset:
                     return MediatorType.SetAsset;
+
                 case MediatorTypes.StackAsset:
                     return MediatorType.StackAsset;
+
                 case MediatorTypes.QueueAsset:
                     return MediatorType.QueueAsset;
+
                 case MediatorTypes.DictionaryAsset:
                     return MediatorType.DictionaryAsset;
+
                 case MediatorTypes.MapAsset:
                     return MediatorType.MapAsset;
+
                 case MediatorTypes.ValueAssetConstant:
                     return MediatorType.ValueAssetSerialized;
+
                 case MediatorTypes.ValueAssetRuntime:
                     return MediatorType.ValueAssetRuntime;
+
                 case MediatorTypes.ValueAssetSave:
                     return MediatorType.ValueAssetSave;
+
                 case MediatorTypes.ValueAssetProperty:
                     return MediatorType.ValueAssetProperty;
+
                 case MediatorTypes.LockAsset:
                     return MediatorType.LockAsset;
 
