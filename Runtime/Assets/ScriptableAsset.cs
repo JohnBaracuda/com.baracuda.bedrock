@@ -30,17 +30,7 @@ namespace Baracuda.Bedrock.Assets
             /// <summary>
             ///     When enabled, a developer annotation field is displayed.
             /// </summary>
-            Annotation = 2,
-
-            /// <summary>
-            ///     When enabled, changes to this asset during runtime are reset when entering edit mode.
-            /// </summary>
-            ResetRuntimeChanges = 4,
-
-            /// <summary>
-            ///     When enabled, dependencies are not automatically injected after the first scene was loaded.
-            /// </summary>
-            InjectDependencies = 8
+            Annotation = 2
         }
 
         [PropertySpace(0, 8)]
@@ -112,38 +102,5 @@ namespace Baracuda.Bedrock.Assets
         {
             ScriptableAssetUtility.ResetAsset(this);
         }
-
-        [CallbackOnInitializationFirstPass]
-        protected void HandleDependencies()
-        {
-            // if (assetOptions.HasFlagFast(Options.InjectDependencies))
-            // {
-            //     Inject.Dependencies(this, false);
-            // }
-        }
-
-#if UNITY_EDITOR
-
-        [NonSerialized] private string _json;
-
-        [CallbackOnEnterPlayMode]
-        private void OnEnterPlayMode()
-        {
-            if (assetOptions.HasFlagFast(Options.ResetRuntimeChanges))
-            {
-                _json = ScriptableAssetUtility.GetAssetJSon(this);
-            }
-        }
-
-        [CallbackOnExitPlayMode]
-        private void OnExitPlayMode()
-        {
-            if (assetOptions.HasFlagFast(Options.ResetRuntimeChanges))
-            {
-                ScriptableAssetUtility.SetAssetJSon(this, _json);
-            }
-        }
-
-#endif
     }
 }

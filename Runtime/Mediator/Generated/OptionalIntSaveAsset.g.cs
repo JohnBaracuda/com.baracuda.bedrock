@@ -4,7 +4,7 @@ using System;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class OptionalIntSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<Baracuda.Utilities.Types.Optional<System.Int32>>
+    public class OptionalIntAsset : Baracuda.Bedrock.Values.SaveDataAsset<Baracuda.Utilities.Types.Optional<System.Int32>>
     {
     }
 }

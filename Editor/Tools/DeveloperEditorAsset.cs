@@ -1,12 +1,12 @@
-using Baracuda.Bedrock.Assets;
 using System;
+using UnityEngine;
 
 namespace Baracuda.Bedrock.Editor.Tools
 {
     /// <summary>
     ///     Base type for developer specific configuration files.
     /// </summary>
-    public abstract class DeveloperEditorAsset<T> : ScriptableAsset where T : DeveloperEditorAsset<T>
+    public abstract class DeveloperEditorAsset<T> : ScriptableObject where T : DeveloperEditorAsset<T>
     {
         private static T local;
 

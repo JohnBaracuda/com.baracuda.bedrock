@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class ColorSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<UnityEngine.Color>
+    public class ColorAsset : Baracuda.Bedrock.Values.SaveDataAsset<UnityEngine.Color>
     {
     }
 }

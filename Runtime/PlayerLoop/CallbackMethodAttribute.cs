@@ -1,5 +1,5 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace Baracuda.Bedrock.PlayerLoop
 {
@@ -38,20 +38,6 @@ namespace Baracuda.Bedrock.PlayerLoop
     ///     Method is called when the games subsystems are initialized.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class CallbackOnInitializationFirstPassAttribute : CallbackMethodAttribute
-    {
-        /// <summary>
-        ///     Method is called when the games subsystems are initialized.
-        /// </summary>
-        public CallbackOnInitializationFirstPassAttribute() : base("RaiseInitializationCompletedFirstPass")
-        {
-        }
-    }
-
-    /// <summary>
-    ///     Method is called when the games subsystems are initialized.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
     public class CallbackOnInitializationAttribute : CallbackMethodAttribute
     {
         /// <summary>
@@ -72,76 +58,6 @@ namespace Baracuda.Bedrock.PlayerLoop
         ///     Method is called when the application is shutdown.
         /// </summary>
         public CallbackOnApplicationQuitAttribute() : base(Segment.ApplicationQuit)
-        {
-        }
-    }
-
-    /// <summary>
-    ///     Method is called every frame.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class CallbackOnUpdateAttribute : CallbackMethodAttribute
-    {
-        /// <summary>
-        ///     Method is called every frame.
-        /// </summary>
-        public CallbackOnUpdateAttribute() : base(Segment.Update)
-        {
-        }
-    }
-
-    /// <summary>
-    ///     Method is called every frame during late update.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class CallbackOnLateUpdateAttribute : CallbackMethodAttribute
-    {
-        /// <summary>
-        ///     Method is called every frame during late update.
-        /// </summary>
-        public CallbackOnLateUpdateAttribute() : base(Segment.LateUpdate)
-        {
-        }
-    }
-
-    /// <summary>
-    ///     Method is called every fixed physics update.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class CallbackOnFixedUpdateAttribute : CallbackMethodAttribute
-    {
-        /// <summary>
-        ///     Method is called every fixed physics update.
-        /// </summary>
-        public CallbackOnFixedUpdateAttribute() : base(Segment.FixedUpdate)
-        {
-        }
-    }
-
-    /// <summary>
-    ///     Method is called after the first scene was loaded.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class CallbackOnAfterFirstSceneLoadAttribute : CallbackMethodAttribute
-    {
-        /// <summary>
-        ///     Method is called after the first scene was loaded.
-        /// </summary>
-        public CallbackOnAfterFirstSceneLoadAttribute() : base(Segment.AfterFirstSceneLoad)
-        {
-        }
-    }
-
-    /// <summary>
-    ///     Method is called before the first scene is loaded.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class CallbackOnBeforeFirstSceneLoadAttribute : CallbackMethodAttribute
-    {
-        /// <summary>
-        ///     Method is called before the first scene is loaded.
-        /// </summary>
-        public CallbackOnBeforeFirstSceneLoadAttribute() : base(Segment.BeforeFirstSceneLoad)
         {
         }
     }
@@ -198,20 +114,6 @@ namespace Baracuda.Bedrock.PlayerLoop
         ///     Method is called when exiting play mode (editor only)
         /// </summary>
         public CallbackOnExitPlayModeAttribute() : base(Segment.ExitingPlayMode)
-        {
-        }
-    }
-
-    /// <summary>
-    ///     Method is called before a build is started.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
-    public class CallbackOnBuildPreprocessorAttribute : CallbackMethodAttribute
-    {
-        /// <summary>
-        ///     Method is called before a build is started.
-        /// </summary>
-        public CallbackOnBuildPreprocessorAttribute() : base(Segment.BuildPreprocessor)
         {
         }
     }

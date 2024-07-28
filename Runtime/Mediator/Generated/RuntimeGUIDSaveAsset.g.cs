@@ -3,7 +3,7 @@ using Baracuda.Utilities.Types;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class RuntimeGUIDSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<Baracuda.Utilities.Types.RuntimeGUID>
+    public class RuntimeGUIDAsset : Baracuda.Bedrock.Values.SaveDataAsset<Baracuda.Utilities.Types.RuntimeGUID>
     {
     }
 }

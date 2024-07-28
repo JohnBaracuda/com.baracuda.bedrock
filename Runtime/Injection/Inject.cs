@@ -300,7 +300,7 @@ namespace Baracuda.Bedrock.Injection
                 }
 
                 var serviceLocator = injectAttribute.Scope is null
-                    ? ServiceLocator.Global
+                    ? ServiceLocator.Runtime
                     : ServiceLocator.ForScope(injectAttribute.Scope);
 
                 var dependencyType = propertyInfo.PropertyType;
@@ -336,7 +336,7 @@ namespace Baracuda.Bedrock.Injection
                 }
 
                 var serviceLocator = injectAttribute.Scope is null
-                    ? ServiceLocator.Global
+                    ? ServiceLocator.Runtime
                     : ServiceLocator.ForScope(injectAttribute.Scope);
 
                 var dependencyType = fieldInfo.FieldType;
@@ -372,7 +372,7 @@ namespace Baracuda.Bedrock.Injection
                     case InjectAttribute injectAttribute:
                     {
                         var serviceLocator = injectAttribute.Scope is null
-                            ? ServiceLocator.Global
+                            ? ServiceLocator.Runtime
                             : ServiceLocator.ForScope(injectAttribute.Scope);
 
                         var dependencyType = propertyInfo.PropertyType;
@@ -417,7 +417,7 @@ namespace Baracuda.Bedrock.Injection
                     case InjectAttribute injectAttribute:
                     {
                         var serviceLocator = injectAttribute.Scope is null
-                            ? ServiceLocator.Global
+                            ? ServiceLocator.Runtime
                             : ServiceLocator.ForScope(injectAttribute.Scope);
 
                         var dependencyType = fieldInfo.FieldType;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Baracuda.Bedrock.Odin;
-using Baracuda.Bedrock.PlayerLoop;
 using Baracuda.Serialization;
 using Baracuda.Utilities.Events;
 using Sirenix.OdinInspector;
@@ -30,21 +29,20 @@ namespace Baracuda.Bedrock.Statistics
 
         protected StatData<T> StatData => _statData;
         private readonly Broadcast<T> _changedBroadcast = new();
+        private static readonly StoreOptions storeOptions = new("Statistics", typeof(T).Name);
 
         #endregion
 
 
         #region Setup
 
-        protected override void OnEnable()
+        protected void OnEnable()
         {
-            base.OnEnable();
 #if UNITY_EDITOR
             var path = UnityEditor.AssetDatabase.GetAssetPath(this);
             guid = UnityEditor.AssetDatabase.AssetPathToGUID(path);
 #endif
             FileSystem.InitializationCompleted += Initialize;
-            FileSystem.ShutdownCompleted += Shutdown;
             if (FileSystem.IsInitialized)
             {
                 Initialize();
@@ -83,21 +81,7 @@ namespace Baracuda.Bedrock.Statistics
             _statData.name = Name;
             _statData.type = Type();
 
-            Profile.StoreFile(guid, _statData, new StoreOptions("Statistics", typeof(T).Name));
-        }
-
-        private void Shutdown()
-        {
-            _statData = null;
-        }
-
-        [CallbackOnApplicationQuit]
-        private void OnQuit()
-        {
-            if (SaveOnQuit)
-            {
-                Save();
-            }
+            Profile.SaveFile(guid, _statData, storeOptions);
         }
 
         #endregion
@@ -110,11 +94,7 @@ namespace Baracuda.Bedrock.Statistics
         protected void SetStatDirty()
         {
             _changedBroadcast.Raise(Value);
-            Profile.StoreFile(guid, _statData);
-            if (AutoSave)
-            {
-                Save();
-            }
+            Profile.SaveFile(guid, _statData, storeOptions);
             Updated.Raise(this);
 #if UNITY_EDITOR
             if (Repaint && UnityEditor.Selection.objects.Contains(this))
@@ -122,18 +102,6 @@ namespace Baracuda.Bedrock.Statistics
                 UnityEditor.EditorUtility.SetDirty(this);
             }
 #endif
-        }
-
-        #endregion
-
-
-        #region Saving
-
-        [Button]
-        [Foldout("Debug")]
-        public void Save()
-        {
-            Profile.SaveFile(guid, _statData);
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using System;
-using Baracuda.Bedrock.Assets;
 using Baracuda.Bedrock.Odin;
 using Baracuda.Serialization;
 using Baracuda.Utilities.Events;
@@ -10,7 +9,7 @@ using UnityEngine.Localization;
 
 namespace Baracuda.Bedrock.Statistics
 {
-    public abstract class StatAsset : ScriptableAsset
+    public abstract class StatAsset : ScriptableObject
     {
         #region Fields
 
@@ -23,10 +22,6 @@ namespace Baracuda.Bedrock.Statistics
         [Tooltip("Determines the level on which the stat is saved. Profile specific or shared.")]
         [LabelText("Save To")]
         [SerializeField] private StorageLevel stage = StorageLevel.Profile;
-        [Tooltip("When enabled, the stat is saved every time it is updated.")]
-        [SerializeField] private bool autoSave;
-        [Tooltip("When enabled, the stat is saved when the application is shutdown.")]
-        [SerializeField] private bool saveOnQuit;
         [Tooltip("When enabled, the objects inspector is repainted when the stat is updated.")]
         [SerializeField] private bool repaint;
 
@@ -55,9 +50,7 @@ namespace Baracuda.Bedrock.Statistics
 
         #region Protected
 
-        protected bool AutoSave => autoSave;
-        protected bool SaveOnQuit => saveOnQuit;
-        protected new bool Repaint => repaint;
+        protected bool Repaint => repaint;
 
         protected ISaveProfile Profile =>
             stage switch

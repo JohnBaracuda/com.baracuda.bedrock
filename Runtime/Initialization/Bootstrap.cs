@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
+using Object = UnityEngine.Object;
 
 namespace Baracuda.Bedrock.Initialization
 {
@@ -27,8 +28,10 @@ namespace Baracuda.Bedrock.Initialization
         [Preserve]
         [InlineInspector]
         [SerializeField] private FileSystemArgumentsAsset fileSystemArgumentsEditor;
-
+        [Space]
         [SerializeField] private string bootstrapKey = "Preload";
+
+        private const string GameInstallerAssetName = "GameInstaller";
 
         #endregion
 
@@ -48,7 +51,7 @@ namespace Baracuda.Bedrock.Initialization
             await Resources.UnloadUnusedAssets();
 #endif
 
-            Debug.Log(nameof(Bootstrap), "(1/5) Initializing File System");
+            Debug.Log(nameof(Bootstrap), "(1/6) Initializing File System");
 #if UNITY_EDITOR
             if (FileSystem.IsInitialized)
             {
@@ -72,7 +75,7 @@ namespace Baracuda.Bedrock.Initialization
 
             await FileSystem.InitializeAsync(arguments);
 
-            Debug.Log(nameof(Bootstrap), "(2/5) Loading Addressables");
+            Debug.Log(nameof(Bootstrap), "(2/6) Loading Addressables");
 
             await Addressables.InitializeAsync();
 
@@ -80,22 +83,26 @@ namespace Baracuda.Bedrock.Initialization
 
             foreach (var resourceLocation in locations)
             {
-                Debug.Log(nameof(Bootstrap),
-                    $"Loading Resource [{resourceLocation.PrimaryKey}]");
+                Debug.Log(nameof(Bootstrap), $"Loading Resource [{resourceLocation.PrimaryKey}]");
 
                 await Addressables.LoadAssetAsync<Object>(resourceLocation);
             }
 
-            Debug.Log(nameof(Bootstrap), "(3/5) Loading Resources");
+            Debug.Log(nameof(Bootstrap), "(3/6) Loading Resources");
 
-            await Resources.LoadAsync<AssetRepository>("AssetRepository");
+            var services = (InstallationAsset)await Resources.LoadAsync<InstallationAsset>(GameInstallerAssetName);
 
-            Debug.Log(nameof(Bootstrap), "(4/5) Installing Runtime Systems");
-            AssetRepository.Singleton.InstallRuntimeSystems();
+            Debug.Log(nameof(Bootstrap), "(4/6) Installing Domain Services");
+
+            services.InstallDomainServices();
+
+            Debug.Log(nameof(Bootstrap), "(5/6) Installing Runtime Services");
+
+            services.InstallRuntimeServices();
 
             Gameloop.RaiseInitializationCompleted();
 
-            Debug.Log(nameof(Bootstrap), "(5/5) Loading First Level");
+            Debug.Log(nameof(Bootstrap), "(6/6) Loading First Level");
 
             await SceneLoader
                 .Create()
@@ -133,9 +140,20 @@ namespace Baracuda.Bedrock.Initialization
             }
 
             Debug.Log("Bootstrap", "Installing Runtime Systems");
-            var assetRegistry = Resources.Load<AssetRepository>("AssetRepository");
-            assetRegistry.InstallRuntimeSystems();
+            var services = Resources.Load<InstallationAsset>(GameInstallerAssetName);
+            services.InstallDomainServices();
+            services.InstallRuntimeServices();
             Gameloop.RaiseInitializationCompleted();
+        }
+
+        [UnityEditor.InitializeOnLoadMethodAttribute]
+        private static void OnLoad()
+        {
+            var services = Resources.Load<InstallationAsset>(GameInstallerAssetName);
+            if (services)
+            {
+                services.InstallDomainServices();
+            }
         }
 #endif
 

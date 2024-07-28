@@ -53,7 +53,6 @@ namespace Baracuda.Bedrock.PlayerLoop
         public static void RaiseInitializationCompleted()
         {
             Debug.Log("Gameloop", "Raising initialization completed!");
-            RaiseCallback("RaiseInitializationCompletedFirstPass");
             RaiseInitializationCompletedInternal();
         }
 

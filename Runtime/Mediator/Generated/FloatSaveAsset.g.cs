@@ -3,7 +3,7 @@ using System;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class FloatSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<System.Single>
+    public class FloatAsset : Baracuda.Bedrock.Values.SaveDataAsset<System.Single>
     {
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Baracuda.Bedrock.Injection;
 using Baracuda.Utilities;
 using JetBrains.Annotations;
-using UnityEngine;
 
 namespace Baracuda.Bedrock.Services
 {
@@ -15,8 +14,8 @@ namespace Baracuda.Bedrock.Services
         private readonly Dictionary<Type, Delegate> _transientServices = new();
         private readonly Dictionary<Type, Delegate> _lazyServices = new();
         private readonly HashSet<Type> _registeredServiceTypes = new();
-
         private readonly LogCategory _category = nameof(ServiceContainer);
+        private ServiceContainer _fallbackContainer;
 
         #endregion
 
@@ -30,15 +29,11 @@ namespace Baracuda.Bedrock.Services
         }
 
         [PublicAPI]
+        public int ServiceCount => _services.Count;
+
+        [PublicAPI]
         public T Get<T>() where T : class
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-
             var type = typeof(T);
             if (_services.TryGetValue(type, out var value))
             {
@@ -58,6 +53,11 @@ namespace Baracuda.Bedrock.Services
                 return transientFunc.CastExplicit<Func<T>>()();
             }
 
+            if (_fallbackContainer is not null)
+            {
+                return _fallbackContainer.Get<T>();
+            }
+
             Debug.LogWarning(_category, $"Service of type {type.FullName} not registered");
             return null;
         }
@@ -65,13 +65,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public object Get(Type type)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-
             if (_services.TryGetValue(type, out var value))
             {
                 return value;
@@ -91,6 +84,11 @@ namespace Baracuda.Bedrock.Services
                 return transientFunc.DynamicInvoke();
             }
 
+            if (_fallbackContainer is not null)
+            {
+                return _fallbackContainer.Get(type);
+            }
+
             Debug.LogWarning(_category, $"Service of type {type.FullName} not registered");
             return null;
         }
@@ -101,14 +99,8 @@ namespace Baracuda.Bedrock.Services
         #region Public API: Try Get
 
         [PublicAPI]
-        public bool TryResolve<T>(out T service) where T : class
+        public bool TryGet<T>(out T service) where T : class
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
             var type = typeof(T);
             if (_services.TryGetValue(type, out var value))
             {
@@ -132,19 +124,18 @@ namespace Baracuda.Bedrock.Services
                 return true;
             }
 
+            if (_fallbackContainer is not null)
+            {
+                return _fallbackContainer.TryGet(out service);
+            }
+
             service = default;
             return false;
         }
 
         [PublicAPI]
-        public bool TryResolve(Type type, out object service)
+        public bool TryGet(Type type, out object service)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
             if (_services.TryGetValue(type, out var value))
             {
                 service = value;
@@ -166,6 +157,11 @@ namespace Baracuda.Bedrock.Services
                 return true;
             }
 
+            if (_fallbackContainer is not null)
+            {
+                return _fallbackContainer.TryGet(type, out service);
+            }
+
             service = default;
             return false;
         }
@@ -178,17 +174,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public ServiceContainer Add<T>(T service)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-            if (!Application.isPlaying)
-            {
-                return null;
-            }
-
             var type = typeof(T);
 
             if (!_registeredServiceTypes.Add(type))
@@ -205,13 +190,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public ServiceContainer Add(Type type, object service)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-
             if (!type.IsInstanceOfType(service))
             {
                 Debug.LogWarning(_category, "Type of service does not match type of service interface!");
@@ -232,13 +210,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public ServiceContainer AddTransient<T>(Func<T> func)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-
             var type = typeof(T);
 
             if (!_registeredServiceTypes.Add(type))
@@ -255,13 +226,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public ServiceContainer AddTransient(Type type, Delegate func)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-
             if (!_registeredServiceTypes.Add(type))
             {
                 Debug.LogWarning(_category, $"Service of type {type.FullName} is already registered!");
@@ -282,13 +246,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public ServiceContainer AddLazy<T>(Func<T> func)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-
             var type = typeof(T);
 
             if (!_registeredServiceTypes.Add(type))
@@ -305,13 +262,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public ServiceContainer AddLazy(Type type, Delegate func)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
-
             if (!_registeredServiceTypes.Add(type))
             {
                 Debug.LogWarning(_category, $"Service of type {type.FullName} is already registered!");
@@ -332,17 +282,21 @@ namespace Baracuda.Bedrock.Services
         #endregion
 
 
+        #region Public API: Contains
+
+        public bool Contains<T>()
+        {
+            return _services.ContainsKey(typeof(T));
+        }
+
+        #endregion
+
+
         #region Public API: Remove
 
         [PublicAPI]
         public ServiceContainer Remove<T>(T service)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
             var type = typeof(T);
 
             if (!_registeredServiceTypes.Remove(type))
@@ -359,12 +313,6 @@ namespace Baracuda.Bedrock.Services
         [PublicAPI]
         public ServiceContainer Remove<T>()
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new InvalidOperationException("Application must be running!");
-            }
-#endif
             var type = typeof(T);
 
             if (!_registeredServiceTypes.Remove(type))
@@ -376,6 +324,25 @@ namespace Baracuda.Bedrock.Services
             _transientServices.TryRemove(type);
             _lazyServices.TryRemove(type);
             return this;
+        }
+
+        #endregion
+
+
+        #region Internal API:
+
+        internal ServiceContainer WithFallbackContainer(ServiceContainer fallback)
+        {
+            _fallbackContainer = fallback;
+            return this;
+        }
+
+        public void Reset()
+        {
+            _services.Clear();
+            _transientServices.Clear();
+            _lazyServices.Clear();
+            _registeredServiceTypes.Clear();
         }
 
         #endregion

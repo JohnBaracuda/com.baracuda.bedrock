@@ -1,16 +1,15 @@
-using Baracuda.Bedrock.Assets;
+using System.Collections.Generic;
 using Baracuda.Utilities.Types;
 using FMOD.Studio;
 using FMODUnity;
 using JetBrains.Annotations;
-using System.Collections.Generic;
 using UnityEngine;
 using StopMode = FMOD.Studio.STOP_MODE;
 using Attribute3D = FMOD.ATTRIBUTES_3D;
 
 namespace Baracuda.Bedrock.Audio
 {
-    public class AudioAsset : ScriptableAsset
+    public class AudioAsset : ScriptableObject
     {
         #region Inspector
 

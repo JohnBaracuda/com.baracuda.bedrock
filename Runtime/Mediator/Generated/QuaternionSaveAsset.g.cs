@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class QuaternionSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<UnityEngine.Quaternion>
+    public class QuaternionAsset : Baracuda.Bedrock.Values.SaveDataAsset<UnityEngine.Quaternion>
     {
     }
 }

@@ -1,14 +1,13 @@
 using System;
-using Baracuda.Bedrock.Assets;
-using Baracuda.Bedrock.Odin;
-using Sirenix.OdinInspector;
+using Baracuda.Bedrock.Services;
+using UnityEngine;
 
 namespace Baracuda.Bedrock.Singleton
 {
     /// <summary>
     ///     Base type for developer specific configuration files.
     /// </summary>
-    public abstract class DeveloperAsset<T> : ScriptableAsset where T : DeveloperAsset<T>
+    public abstract class DeveloperAsset<T> : ScriptableObject where T : DeveloperAsset<T>
     {
         private static T local;
 
@@ -20,7 +19,7 @@ namespace Baracuda.Bedrock.Singleton
             get
             {
 #if !UNITY_EDITOR
-                return AssetRepository.ResolveSingleton<T>();
+                return ServiceLocator.Domain.Get<T>();
 #else
                 if (local == null)
                 {
@@ -53,7 +52,7 @@ namespace Baracuda.Bedrock.Singleton
 
                 if (local == null)
                 {
-                    Singleton = AssetRepository.ResolveSingleton<T>();
+                    Singleton = ServiceLocator.Domain.Get<T>();
                 }
 
                 return local;
@@ -71,43 +70,13 @@ namespace Baracuda.Bedrock.Singleton
                 var guid = UnityEditor.AssetDatabase.AssetPathToGUID(path);
                 UnityEditor.EditorPrefs.SetString(typeof(T).FullName, guid);
 
-                if (AssetRepository.ExistsSingleton<T>() is false)
+                if (ServiceLocator.Domain.Contains<T>() is false)
                 {
-                    AssetRepository.RegisterSingleton(value);
+                    ServiceLocator.Domain.Add(value);
                 }
 #endif
                 local = value;
             }
         }
-
-#if UNITY_EDITOR
-
-        private bool IsLocal()
-        {
-            return this == Singleton;
-        }
-
-        private bool IsGlobal()
-        {
-            return this == AssetRepository.ResolveSingleton<T>();
-        }
-
-        [Button]
-        [Foldout("Asset")]
-        [HideIf(nameof(IsLocal))]
-        public void DeclareAsLocal()
-        {
-            Singleton = (T)this;
-        }
-
-        [Button]
-        [Foldout("Asset")]
-        [HideIf(nameof(IsGlobal))]
-        public void DeclareAsGlobal()
-        {
-            AssetRepository.RegisterSingleton((T)this);
-        }
-
-#endif
     }
 }

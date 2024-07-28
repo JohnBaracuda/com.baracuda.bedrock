@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class FullScreenModeSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<UnityEngine.FullScreenMode>
+    public class FullScreenModeAsset : Baracuda.Bedrock.Values.SaveDataAsset<UnityEngine.FullScreenMode>
     {
     }
 }

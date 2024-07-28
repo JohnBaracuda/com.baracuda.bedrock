@@ -3,7 +3,7 @@ using System;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class LongSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<System.Int64>
+    public class LongAsset : Baracuda.Bedrock.Values.SaveDataAsset<System.Int64>
     {
     }
 }

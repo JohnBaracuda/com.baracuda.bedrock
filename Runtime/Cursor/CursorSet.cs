@@ -1,6 +1,5 @@
-using Baracuda.Bedrock.Assets;
-using Baracuda.Bedrock.Injection;
 using Baracuda.Bedrock.Odin;
+using Baracuda.Bedrock.Services;
 using Baracuda.Utilities.Collections;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -8,7 +7,7 @@ using UnityEngine.Pool;
 
 namespace Baracuda.Bedrock.Cursor
 {
-    public class CursorSet : ScriptableAsset
+    public class CursorSet : ScriptableObject
     {
         [SerializeField] [Required] private CursorFile fallback;
         [Space]
@@ -21,8 +20,7 @@ namespace Baracuda.Bedrock.Cursor
                 return file;
             }
 
-            Debug.LogWarning("Cursor Set",
-                $"Unable to find cursor file for {type.name} ({type.GetInstanceID()}) in {name}!");
+            Debug.LogWarning("Cursor Set", $"Unable to find cursor file for {type.name} ({type.GetInstanceID()}) in {name}!");
 
             return fallback;
         }
@@ -43,17 +41,15 @@ namespace Baracuda.Bedrock.Cursor
 
 #if UNITY_EDITOR
 
-        [Inject] private readonly CursorManager _cursorManager;
-
         [Button]
         [Line]
         private void Initialize()
         {
             var assets = ListPool<CursorType>.Get();
             var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(CursorType)}");
-            for (var i = 0; i < guids.Length; i++)
+            foreach (var guid in guids)
             {
-                var assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
+                var assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
                 var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<CursorType>(assetPath);
                 if (asset != null)
                 {
@@ -63,11 +59,7 @@ namespace Baracuda.Bedrock.Cursor
 
             foreach (var cursorType in assets)
             {
-                if (cursorMappings.ContainsKey(cursorType))
-                {
-                    continue;
-                }
-                cursorMappings.Add(cursorType, null);
+                cursorMappings.TryAdd(cursorType, null);
             }
 
             ListPool<CursorType>.Release(assets);
@@ -84,7 +76,7 @@ namespace Baracuda.Bedrock.Cursor
         {
             if (Application.isPlaying)
             {
-                _cursorManager.SwitchActiveCursorSet(this);
+                ServiceLocator.Get<CursorManager>().SwitchActiveCursorSet(this);
             }
         }
 #endif

@@ -305,7 +305,7 @@ namespace Baracuda.Bedrock.Editor.Generation
                         {
                             var mediator = CreateMediator(
                                 types,
-                                typeof(ValueAssetSave<>),
+                                typeof(SaveDataAsset<>),
                                 suffix,
                                 attributePath,
                                 nameSpaceOverride);

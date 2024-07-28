@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class Vector2SaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<UnityEngine.Vector2>
+    public class Vector2Asset : Baracuda.Bedrock.Values.SaveDataAsset<UnityEngine.Vector2>
     {
     }
 }

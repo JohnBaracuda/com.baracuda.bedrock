@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Baracuda.Bedrock.Mediator
 {
-    public class LayerMaskSaveAsset : Baracuda.Bedrock.Values.ValueAssetSave<UnityEngine.LayerMask>
+    public class LayerMaskAsset : Baracuda.Bedrock.Values.SaveDataAsset<UnityEngine.LayerMask>
     {
     }
 }
